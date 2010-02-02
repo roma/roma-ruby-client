@@ -44,8 +44,6 @@ SPEC = Gem::Specification.new do |s|
   s.has_rdoc = true
   s.rdoc_options.concat RDOC_OPTIONS
   s.extra_rdoc_files = ["README.rdoc"]
-
-  s.add_dependency('roma-commons')
 end
 
 package_task = Rake::GemPackageTask.new(SPEC) do |pkg|
