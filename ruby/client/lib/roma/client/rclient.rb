@@ -1,7 +1,8 @@
 require 'digest/sha1'
 require 'socket'
 require 'singleton'
-require 'roma/commons'
+require 'roma/client/routing/routing_data'
+require 'roma/client/con_pool'
 require 'roma/client/client_rttable'
 require 'roma/client/sender'
 
@@ -377,7 +378,7 @@ module Roma
       rescue => e
         unless e.instance_of?(RuntimeError)
           @rttable.proc_failed(nid)
-          Roma::Messaging::ConPool.instance.delete_connection(nid)
+          ConPool.instance.delete_connection(nid)
         end
         sleep 0.3
         retry if (cnt ||= 0; cnt += 1) < @retry_count_write
@@ -396,7 +397,7 @@ module Roma
       rescue => e
         unless e.instance_of?(RuntimeError)
           @rttable.proc_failed(nid)
-          Roma::Messaging::ConPool.instance.delete_connection(nid)
+          ConPool.instance.delete_connection(nid)
         end
         sleep 0.3
         retry if (cnt ||= 0; cnt += 1) < @retry_count_write

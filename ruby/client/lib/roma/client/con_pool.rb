@@ -3,7 +3,7 @@ require 'socket'
 require 'singleton'
 
 module Roma
-  module Messaging
+  module Client
     
     class ConPool
       include Singleton
@@ -73,5 +73,5 @@ module Roma
 
     end # class ConPool
 
-  end # module Messaging
+  end # module Client
 end # module Roma

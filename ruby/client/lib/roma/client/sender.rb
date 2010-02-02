@@ -11,10 +11,10 @@ module Roma
 
       def send_route_mklhash_command(node_id)
         timeout(1){
-          conn = Roma::Messaging::ConPool.instance.get_connection(node_id)
+          conn = ConPool.instance.get_connection(node_id)
           conn.write "mklhash 0\r\n"
           ret = conn.gets
-          Roma::Messaging::ConPool.instance.return_connection(node_id, conn)
+          ConPool.instance.return_connection(node_id, conn)
           return ret.chomp if ret
         }
       rescue =>e
@@ -28,7 +28,7 @@ module Roma
           if buf[0].to_i == 1 && buf[1].to_i == 8
             return send_routedump_yaml_command(node_id)
           end
-          conn = Roma::Messaging::ConPool.instance.get_connection(node_id)
+          conn = ConPool.instance.get_connection(node_id)
           conn.write "routingdump\r\n"
           routes_length = conn.gets.to_i
           if (routes_length <= 0)
@@ -44,7 +44,7 @@ module Roma
           conn.read(2) # "\r\n"
           conn.gets
           rd = Marshal.load(routes)
-          Roma::Messaging::ConPool.instance.return_connection(node_id, conn)
+          ConPool.instance.return_connection(node_id, conn)
           return rd
         }
       rescue =>e
@@ -53,7 +53,7 @@ module Roma
       end
 
       def send_routedump_yaml_command(node_id)
-        conn = Roma::Messaging::ConPool.instance.get_connection(node_id)
+        conn = ConPool.instance.get_connection(node_id)
         conn.write "routingdump yaml\r\n"
         
         yaml = ''
@@ -62,7 +62,7 @@ module Roma
         end
 
         rd = YAML.load(yaml)
-        Roma::Messaging::ConPool.instance.return_connection(node_id, conn)
+        ConPool.instance.return_connection(node_id, conn)
         return rd        
       end
 
@@ -71,22 +71,22 @@ module Roma
       end
 
       def send_version_command(ap)
-        conn = Roma::Messaging::ConPool.instance.get_connection(ap)
+        conn = ConPool.instance.get_connection(ap)
         conn.write("version\r\n")
         res = conn.gets.chomp
-        Roma::Messaging::ConPool.instance.return_connection(ap, conn)
+        ConPool.instance.return_connection(ap, conn)
         raise unless res
         return res
       end
 
       def send_verbosity_command(ap)
-        conn = Roma::Messaging::ConPool.instance.get_connection(ap)
+        conn = ConPool.instance.get_connection(ap)
         # TODO
-        Roma::Messaging::ConPool.instance.return_connection(ap, conn)
+        ConPool.instance.return_connection(ap, conn)
       end
 
       def send_command(nid, cmd, value = nil, receiver = :oneline_receiver)
-        con = Roma::Messaging::ConPool.instance.get_connection(nid)
+        con = ConPool.instance.get_connection(nid)
         raise unless con
         if value
           con.write "#{cmd}\r\n#{value}\r\n"
@@ -94,7 +94,7 @@ module Roma
           con.write "#{cmd}\r\n"
         end
         ret = send(receiver, con)
-        Roma::Messaging::ConPool.instance.return_connection(nid, con)
+        ConPool.instance.return_connection(nid, con)
         if ret && ret.instance_of?(String) &&
             (ret =~ /^SERVER_ERROR/ || ret =~ /^CLIENT_ERROR/)
           raise ret
