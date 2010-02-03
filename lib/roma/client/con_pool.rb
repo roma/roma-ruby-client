@@ -64,7 +64,6 @@ module Roma
             begin
               @pool[ap].shift.close
             rescue =>e
-              Roma::Logging::RLogger.instance.error("#{__FILE__}:#{__LINE__}:#{e}")
             end
           end
           @pool.delete(ap)

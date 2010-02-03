@@ -1,5 +1,6 @@
 require 'timeout'
 require 'yaml'
+require 'roma/client/con_pool'
 
 module Roma
   module Client

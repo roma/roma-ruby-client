@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
 
-# path =  File.dirname(File.expand_path($PROGRAM_NAME))
-# $LOAD_PATH << path + "/../../../../lib"
-# $LOAD_PATH << path  + "/../../../../../commons/lib"
-
-require 'roma/commons'
 require 'roma/client/sender'
-require 'roma/client/client_rttable'
+require 'roma/client/routing/routing_data'
 
 if ARGV.length < 1
   STDERR.puts "usage:#{$0} node-id"

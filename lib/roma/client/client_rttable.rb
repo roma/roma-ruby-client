@@ -1,5 +1,6 @@
 require 'yaml'
 require 'digest/sha1'
+require 'roma/client/routing/routing_data'
 
 module Roma
   module Client

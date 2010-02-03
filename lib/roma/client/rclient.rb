@@ -1,7 +1,6 @@
 require 'digest/sha1'
 require 'socket'
 require 'singleton'
-require 'roma/client/routing/routing_data'
 require 'roma/client/con_pool'
 require 'roma/client/client_rttable'
 require 'roma/client/sender'

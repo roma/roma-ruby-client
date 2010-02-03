@@ -6,9 +6,8 @@ require 'optparse'
 require 'eventmachine'
 require 'timeout'
 require 'singleton'
-require 'roma/commons'
 require 'roma/client/sender'
-require 'roma/logging/rlogger'
+require 'roma/client/rlogger'
 require 'roma/client/client_rttable'
 
 module Roma
