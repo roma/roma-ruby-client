@@ -131,7 +131,19 @@ module Roma
           read_bytes(con, 2)
         end
         ret
-      end      
+      end
+
+      def value_casid_receiver(con)
+        ret = []
+        while (line = con.gets) != "END\r\n"
+          s = line.split(' ')
+          return line.chomp if s[0] == 'SERVER_ERROR' || s[0] == 'CLIENT_ERROR'
+          ret << read_bytes(con, s[3].to_i)
+          ret << s[4]
+          read_bytes(con, 2)
+        end
+        ret
+      end
 
       def multiplelines_receiver(con) 
         ret = []

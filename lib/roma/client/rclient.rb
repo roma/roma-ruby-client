@@ -221,8 +221,30 @@ module Roma
         sender(:oneline_receiver, key, val, "prepend %s 0 %d %d", expt.to_i, val.length)
       end
 
-      def cas(key, val, expt = 0)
-        raise RuntimeError.new("Unsupported yet") # TODO
+      # Compare And Swap value .
+      #
+      # [key] key for cas .
+      # [value] store value .
+      # [exp] expire seconds .
+      #
+      # [return] return follow set status .
+      # - If method is success, return STORED .
+      # - If method cannot update value, return EXISTS .
+      # - If key doesn't exist in ROMA, this method return NOT_FOUND.
+      # - If server error, return SERVER_ERROR .
+      #
+      # If socket error occured, throw Exception .
+      #
+      # If socket timeout occured, throw TimeoutError .
+      def cas(key, expt = 0, raw = false)
+        raise "A block is required" unless block_given?
+
+        (val, casid) = gets_with_casid(key, raw)
+        return "NOT_FOUND" unless val
+        updated = yield val
+        val = raw ? updated : Marshal.dump(updated)
+
+        sender(:oneline_receiver, key, val, "cas %s 0 %d %d %s", expt.to_i, val.length, casid)
       end
 
       # Delete value .
@@ -366,6 +388,13 @@ module Roma
       end
 
       private
+
+      def gets_with_casid(key, raw = false)
+        ret = sender(:value_casid_receiver, key, nil, "gets %s")
+        return [nil, nil] if ret.size <= 0
+        ret[0] = Marshal.load(ret[0]) unless raw
+        ret
+      end
 
       def sender(receiver, key, value ,cmd, *params)
         nid, d = @rttable.search_node(key)
