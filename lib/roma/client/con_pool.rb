@@ -9,15 +9,21 @@ module Roma
       include Singleton
 
       attr_accessor :maxlength
+      attr_accessor :expire_time
 
-      def initialize(maxlength = 10)
+      def initialize(maxlength = 10, expire_time = 60)
         @pool = {}
         @maxlength = maxlength
+        @expire_time = expire_time
         @lock = Mutex.new
       end
 
       def get_connection(ap)
-        ret = @pool[ap].shift if @pool.key?(ap) && @pool[ap].length > 0
+        ret,last = @pool[ap].shift if @pool.key?(ap) && @pool[ap].length > 0
+        if ret && last < Time.now - @expire_time
+          ret.close
+          ret = nil
+        end
         ret = create_connection(ap) unless ret
         ret
       rescue
@@ -29,10 +35,10 @@ module Roma
           if @pool[ap].length > @maxlength
             con.close
           else
-            @pool[ap] << con
+            @pool[ap] << [con, Time.now]
           end
         else
-          @pool[ap] = [con]
+          @pool[ap] = [[con, Time.now]]
         end
       rescue
       end
