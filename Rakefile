@@ -3,6 +3,10 @@ require 'rubygems'
 require 'rake'
 require 'rubygems/package_task'
 
+if File.exist?(File.expand_path('Gemfile', File.dirname(__FILE__)))
+  require 'bundler/setup'
+end
+
 begin
   require 'rdoc/task'
 rescue LoadError
