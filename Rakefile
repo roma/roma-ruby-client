@@ -29,9 +29,12 @@ PKG_FILES = FileList[
   'spec/**/*.rb',
   'doc/**/*',
   'examples/**/*',
-]
+                    ]
 
-VER_NUM = `ruby -Ilib -e 'require "roma/client/version"; puts Roma::Client::VERSION::STRING'`
+require File.expand_path(File.join("lib", "roma", "client", "version"),
+                         File.dirname(__FILE__))
+
+VER_NUM = Roma::Client::VERSION::STRING
 
 if VER_NUM =~ /([0-9.]+)$/
   CURRENT_VERSION = $1
