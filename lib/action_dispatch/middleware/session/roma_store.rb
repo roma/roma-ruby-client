@@ -15,12 +15,8 @@ module ActionDispatch
         options[:expire_after] ||= options[:expires]
         super
 
-        @default_options = {
-          :namespace => 'rack:session',
-          :memcache_server => 'localhost:11211'
-        }.merge(@default_options)
-
-        @pool = options[:cache] || RetryMemCache.new(@default_options[:memcache_server], @default_options)
+        @pool = options[:cache] || Roma::Client::RomaClient.new(@default_options[:roma_servers],
+                                                          @default_options[:roma_plugin_modules])
         unless @pool.servers.any? { |s| s.alive? }
           raise "#{self} unable to find server during initialization."
         end
