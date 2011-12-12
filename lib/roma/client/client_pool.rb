@@ -15,7 +15,7 @@ module Roma
     class ClientPool
       private_class_method :new
 
-      attr_accessor :ini_nodes
+      attr_accessor :servers
 
       @@client_pools = {}
 
@@ -32,7 +32,7 @@ module Roma
       # return:: RomaClient instance
       def client
         if @clients.empty?
-          Roma::Client::RomaClient.new(ini_nodes, plugin_modules)
+          Roma::Client::RomaClient.new(servers, plugin_modules)
         else
           @clients.pop
         end
@@ -82,7 +82,7 @@ module Roma
         @max_pool_size = 1
         @clients = []
         @plugin_modules = nil
-        self.ini_nodes = nil
+        self.servers = nil
       end
     end
   end
