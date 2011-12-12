@@ -2,6 +2,10 @@
 require File.expand_path(File.join('..', '..', 'spec_helper'), File.dirname(__FILE__))
 
 describe Roma::Client::ClientPool do
+  def get_nodes
+    ['127.0.0.1:12001', '127.0.0.1:12002']
+  end
+  
   context "Singleton" do
     subject { Roma::Client::ClientPool.instance(:test) }
     it {
@@ -52,7 +56,7 @@ describe Roma::Client::ClientPool do
     it {
       pool = Roma::Client::ClientPool.instance(:test_ini_nodes_set)
       pool.ini_nodes.should be_nil
-      nodes = ['127.0.0.1:11211', '127.0.0.1:11212']
+      nodes = get_nodes
       pool.ini_nodes = nodes
       pool.ini_nodes.should == nodes
 
@@ -61,17 +65,57 @@ describe Roma::Client::ClientPool do
   end
 
   context "client" do
-    it { pending "implement test for client/push_client later" }
+    subject do
+      pool = Roma::Client::ClientPool.instance(:test_client)
+      pool.ini_nodes = get_nodes
+      pool
+    end
+
+    it { pending 'TODO: startup or mock roma server'}
+    it { subject.pool_count.should == 0 }
+    it {
+      client = subject.client
+      client.class.should == Roma::Client::RomaClient
+      subject.push_client(client)
+      subject.pool_count.should == 1
+    }
+    it { pending "TODO: check nodes" }
+  end
+
+  context "client multi pool" do
+    subject do
+      pool = Roma::Client::ClientPool.instance(:test_client2)
+      pool.ini_nodes = get_nodes
+      pool
+    end
+
+    it {
+      subject.pool_count.should == 0
+      client  = subject.client
+      client.should_not be_nil
+
+      client2 = subject.client
+      client2.should_not be_nil
+
+      subject.push_client(client)
+      subject.pool_count.should == 1
+
+      subject.push_client(client2)
+      subject.pool_count.should == 1
+
+      client.should be_equal subject.client
+      subject.pool_count.should == 0
+    }
   end
 
   context "plugin modules" do
-    class TestPlugin
+    module TestPlugin
       def test_plugin
         "test_plugin"
       end
     end
 
-    class TestPlugin2
+     module TestPlugin2
       def test_plugin2
         "test_plugin2"
       end
@@ -95,6 +139,18 @@ describe Roma::Client::ClientPool do
       pool.plugin_modules.size.should == 2
       pool.plugin_modules[0] == TestPlugin
       pool.plugin_modules[1] == TestPlugin2
+    }
+
+    it {
+      pool = Roma::Client::ClientPool.instance(:pms_test2)
+      pool.ini_nodes = get_nodes
+      pool.plugin_modules.should be_nil
+
+      pool.plugin_modules = [TestPlugin, TestPlugin2]
+      client = pool.client
+      client.should_not be_nil
+      client.test_plugin.should == "test_plugin"
+      client.test_plugin2.should == "test_plugin2"
     }
   end
 end

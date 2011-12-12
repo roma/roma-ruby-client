@@ -31,17 +31,22 @@ module Roma
       # type:: RomaClient instance group.
       # return:: RomaClient instance
       def client
-        if @clients.nil?
-          Roma::Client::RomaClient.new
+        if @clients.empty?
+          Roma::Client::RomaClient.new(ini_nodes, plugin_modules)
         else
           @clients.pop
         end
       end
 
+      def pool_count
+        @clients.size
+      end
+
       # push RomaClient instance
-      def push_client=
-        @clients ||= []
-        @clients.push(client)
+      def push_client(client)
+        if @clients.size < max_pool_size
+          @clients.push(client)
+        end
       end
 
       # get max pool size
