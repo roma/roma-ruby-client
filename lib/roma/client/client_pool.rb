@@ -54,10 +54,29 @@ module Roma
         @max_pool_size = count
       end
 
+      # get plugin_modules
+      def plugin_modules
+        @plugin_modules
+      end
+
+      # add plugin module
+      def add_plugin_module(m)
+        @plugin_modules ||= []
+        @plugin_modules.push(m)
+      end
+
+      # set plugin modules
+      #
+      # You can set class Array.
+      def plugin_modules=(modules)
+        @plugin_modules = modules
+      end
+
       private
       def initialize
         @max_pool_size = 1
         @clients = []
+        @plugin_modules = nil
         self.ini_nodes = nil
       end
     end

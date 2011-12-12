@@ -63,5 +63,39 @@ describe Roma::Client::ClientPool do
   context "client" do
     it { pending "implement test for client/push_client later" }
   end
+
+  context "plugin modules" do
+    class TestPlugin
+      def test_plugin
+        "test_plugin"
+      end
+    end
+
+    class TestPlugin2
+      def test_plugin2
+        "test_plugin2"
+      end
+    end
+
+    it {
+      pool = Roma::Client::ClientPool.instance(:pm_test)
+      pool.plugin_modules.should be_nil
+
+      pool.add_plugin_module(TestPlugin)
+      pool.plugin_modules.should_not be_nil
+      pool.plugin_modules.size.should == 1
+      pool.plugin_modules[0] == TestPlugin
+    }
+
+    it {
+      pool = Roma::Client::ClientPool.instance(:pms_test)
+      pool.plugin_modules.should be_nil
+
+      pool.plugin_modules = [TestPlugin, TestPlugin2]
+      pool.plugin_modules.size.should == 2
+      pool.plugin_modules[0] == TestPlugin
+      pool.plugin_modules[1] == TestPlugin2
+    }
+  end
 end
 
