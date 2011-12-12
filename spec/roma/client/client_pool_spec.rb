@@ -47,27 +47,27 @@ describe Roma::Client::ClientPool do
     end
   end
 
-  context "ini_nodes default" do
+  context "servers default" do
     subject { Roma::Client::ClientPool.instance(:test) }
-    its(:ini_nodes) { should be_nil }
+    its(:servers) { should be_nil }
   end
 
-  context "ini_nodes set" do
+  context "servers set" do
     it {
-      pool = Roma::Client::ClientPool.instance(:test_ini_nodes_set)
-      pool.ini_nodes.should be_nil
+      pool = Roma::Client::ClientPool.instance(:test_servers_set)
+      pool.servers.should be_nil
       nodes = get_nodes
-      pool.ini_nodes = nodes
-      pool.ini_nodes.should == nodes
+      pool.servers = nodes
+      pool.servers.should == nodes
 
-      Roma::Client::ClientPool.instance(:test_ini_nodes_set2).ini_nodes.should be_nil
+      Roma::Client::ClientPool.instance(:test_ini_nodes_set2).servers.should be_nil
     }
   end
 
   context "client" do
     subject do
       pool = Roma::Client::ClientPool.instance(:test_client)
-      pool.ini_nodes = get_nodes
+      pool.servers = get_nodes
       pool
     end
 
@@ -85,7 +85,7 @@ describe Roma::Client::ClientPool do
   context "client multi pool" do
     subject do
       pool = Roma::Client::ClientPool.instance(:test_client2)
-      pool.ini_nodes = get_nodes
+      pool.servers = get_nodes
       pool
     end
 
@@ -143,7 +143,7 @@ describe Roma::Client::ClientPool do
 
     it {
       pool = Roma::Client::ClientPool.instance(:pms_test2)
-      pool.ini_nodes = get_nodes
+      pool.servers = get_nodes
       pool.plugin_modules.should be_nil
 
       pool.plugin_modules = [TestPlugin, TestPlugin2]
