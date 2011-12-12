@@ -37,7 +37,7 @@ module Roma
             return :error if routes_length < 0
             return nil
           end
-          
+
           routes = ''
           while (routes.length != routes_length)
             routes = routes + conn.read(routes_length - routes.length)
@@ -56,7 +56,7 @@ module Roma
       def send_routedump_yaml_command(node_id)
         conn = ConPool.instance.get_connection(node_id)
         conn.write "routingdump yaml\r\n"
-        
+
         yaml = ''
         while( (line = conn.gets) != "END\r\n" )
           yaml << line
@@ -64,7 +64,7 @@ module Roma
 
         rd = YAML.load(yaml)
         ConPool.instance.return_connection(node_id, conn)
-        return rd        
+        return rd
       end
 
       def send_stats_command
@@ -108,7 +108,7 @@ module Roma
       def oneline_receiver(con)
         ret = con.gets
         raise "connection closed" if ret.nil?
-        ret.chomp 
+        ret.chomp
       end
 
       def value_list_receiver(con)
@@ -145,7 +145,7 @@ module Roma
         ret
       end
 
-      def multiplelines_receiver(con) 
+      def multiplelines_receiver(con)
         ret = []
         while (line = con.gets) != "END\r\n"
           ret << line.chomp
@@ -162,6 +162,5 @@ module Roma
       end
 
     end
-    
   end
 end
