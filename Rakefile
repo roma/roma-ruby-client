@@ -69,7 +69,7 @@ SPEC = Gem::Specification.new do |s|
 
   s.has_rdoc = true
   s.rdoc_options.concat RDOC_OPTIONS
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["README", "CHANGELOG"]
 end
 
 package_task = Gem::PackageTask.new(SPEC) do |pkg|
@@ -82,5 +82,6 @@ Rake::RDocTask.new("doc") { |rdoc|
   rdoc.options.concat RDOC_OPTIONS
   rdoc.rdoc_files.include('lib/**/*.rb')
   rdoc.rdoc_files.include("README")
+  rdoc.rdoc_files.include("CHANGELOG")
 }
 
