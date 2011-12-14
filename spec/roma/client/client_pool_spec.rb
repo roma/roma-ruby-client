@@ -5,7 +5,7 @@ describe Roma::Client::ClientPool do
   def get_nodes
     ['127.0.0.1:12001', '127.0.0.1:12002']
   end
-  
+
   context "Singleton" do
     subject { Roma::Client::ClientPool.instance(:test) }
     it {
@@ -152,6 +152,13 @@ describe Roma::Client::ClientPool do
       client.test_plugin.should == "test_plugin"
       client.test_plugin2.should == "test_plugin2"
     }
+  end
+
+  context "default type" do
+    subject { Roma::Client::ClientPool.instance }
+    it { should_not be_nil }
+    it { subject.class.should == Roma::Client::ClientPool }
+    it { subject.should be_equal Roma::Client::ClientPool.instance(:default) }
   end
 end
 
