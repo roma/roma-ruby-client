@@ -21,7 +21,7 @@ module Roma
 
       # get ClientPool instance
       # type:: identifier for client groups.
-      def self.instance(type)
+      def self.instance(type = :default)
         @@client_pools[type] ||= new
         @@client_pools[type]
       end
