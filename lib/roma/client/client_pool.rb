@@ -16,6 +16,7 @@ module Roma
       private_class_method :new
 
       attr_accessor :servers
+      attr_accessor :default_hash_name
 
       @@client_pools = {}
 
@@ -32,7 +33,9 @@ module Roma
       # return:: RomaClient instance
       def client
         if @clients.empty?
-          Roma::Client::RomaClient.new(servers, plugin_modules)
+          client = Roma::Client::RomaClient.new(servers, plugin_modules)
+          client.default_hash_name = default_hash_name
+          client
         else
           @clients.pop
         end
@@ -83,6 +86,7 @@ module Roma
         @clients = []
         @plugin_modules = nil
         self.servers = nil
+        self.default_hash_name = 'roma'
       end
     end
   end
