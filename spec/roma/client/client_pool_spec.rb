@@ -160,5 +160,28 @@ describe Roma::Client::ClientPool do
     it { subject.class.should == Roma::Client::ClientPool }
     it { subject.should be_equal Roma::Client::ClientPool.instance(:default) }
   end
+
+  context "support hash name" do
+    after(:all) {
+      Roma::Client::ClientPool.instance.default_hash_name = 'roma'
+    }
+
+    subject {
+      pool = Roma::Client::ClientPool.instance
+      pool.servers = get_nodes
+      pool
+    }
+
+    it { subject.default_hash_name.should == 'roma' }
+    it {
+      subject.default_hash_name = 'new_name'
+      subject.default_hash_name.should == 'new_name'
+      Roma::Client::ClientPool.instance.default_hash_name.should == 'new_name'
+      Roma::Client::ClientPool.instance(:other).default_hash_name.should == 'roma'
+
+      client = subject.client
+      client.default_hash_name.should == 'new_name'
+    }
+  end
 end
 
