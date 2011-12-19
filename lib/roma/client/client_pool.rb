@@ -27,6 +27,10 @@ module Roma
         @@client_pools[type]
       end
 
+      def self.release_all
+        @@client_pools = {}
+      end
+
       # get RomaClient instance
       #
       # type:: RomaClient instance group.
