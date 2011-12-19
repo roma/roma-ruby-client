@@ -28,6 +28,12 @@ module Roma
         @@client_pools[type]
       end
 
+      # get all pool
+      def self.client_pools
+        @@client_pools
+      end
+
+      # release all pool
       def self.release_all
         @@client_pools = {}
       end
@@ -83,6 +89,11 @@ module Roma
       # set max_pool_size
       def max_pool_size=(count)
         @max_pool_size = count
+      end
+
+      # get all clients
+      def clients
+        @clients
       end
 
       # get plugin_modules

@@ -66,11 +66,16 @@ module Roma
           rt = make_rttable(node)
           if rt
             @rttable = rt
+            @rttable_last_update = Time.now
             return
           end
         }
 
         raise RuntimeError.new("fatal error")
+      end
+
+      def rttable_last_update
+        @rttable_last_update
       end
 
       def make_rttable(node)
