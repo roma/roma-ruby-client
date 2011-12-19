@@ -32,17 +32,33 @@ module Roma
       # type:: RomaClient instance group.
       # return:: RomaClient instance
       def client
+        c = nil
         if @clients.empty?
           client = Roma::Client::RomaClient.new(servers, plugin_modules)
           client.default_hash_name = default_hash_name
-          client
+          c = client
         else
-          @clients.pop
+          c = @clients.pop
+        end
+
+        return c unless block_given?
+
+        begin
+          yield c
+        ensure
+          push_client(c)
         end
       end
 
+      # get pool count of clients
       def pool_count
         @clients.size
+      end
+
+      # release all pool clients
+      def release
+        @clients.clear
+        true
       end
 
       # push RomaClient instance
