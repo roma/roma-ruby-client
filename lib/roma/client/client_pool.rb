@@ -17,6 +17,7 @@ module Roma
 
       attr_accessor :servers
       attr_accessor :default_hash_name
+      attr_accessor :start_sync_routing_proc
 
       @@client_pools = {}
 
@@ -27,6 +28,10 @@ module Roma
         @@client_pools[type]
       end
 
+      def self.release_all
+        @@client_pools = {}
+      end
+
       # get RomaClient instance
       #
       # type:: RomaClient instance group.
@@ -34,7 +39,9 @@ module Roma
       def client
         c = nil
         if @clients.empty?
-          client = Roma::Client::RomaClient.new(servers, plugin_modules)
+          client = Roma::Client::RomaClient.new(servers,
+                                                plugin_modules,
+                                                start_sync_routing_proc)
           client.default_hash_name = default_hash_name
           c = client
         else
@@ -103,6 +110,7 @@ module Roma
         @plugin_modules = nil
         self.servers = nil
         self.default_hash_name = 'roma'
+        self.start_sync_routing_proc = true
       end
     end
   end

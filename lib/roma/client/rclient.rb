@@ -24,7 +24,7 @@ module Roma
       #
       # [ini_nodes] ROMA nodes array
       # [plugin_modules] set plugin modules if you use .
-      def initialize(ini_nodes,plugin_modules = nil)
+      def initialize(ini_nodes,plugin_modules = nil, start_sync_routing_proc = true)
         @retry_count_write = 10
         @retry_count_read = 5
         @default_hash_name = 'roma'
@@ -37,7 +37,7 @@ module Roma
 
         init_sender
         update_rttable(ini_nodes.map{|n| n.sub(':','_')})
-        init_sync_routing_proc
+        init_sync_routing_proc if start_sync_routing_proc
       end
 
       def init_sync_routing_proc
