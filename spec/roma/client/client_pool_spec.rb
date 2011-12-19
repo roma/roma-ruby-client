@@ -239,6 +239,31 @@ describe Roma::Client::ClientPool do
     end
   end
 
+  context "start sync routing proc" do
+    it {
+      pool = Roma::Client::ClientPool.instance(:sync_test)
+      pool.servers = get_nodes
+      old_thread_count = Thread.list.length
+      pool.client do |c|
+      end
+
+      pool.pool_count.should == 1
+      Thread.list.length.should == old_thread_count + 1
+    }
+
+    it {
+      pool = Roma::Client::ClientPool.instance(:no_sync_test)
+      pool.servers = get_nodes
+      pool.start_sync_routing_proc = false
+      old_thread_count = Thread.list.length
+      pool.client do |c|
+      end
+
+      pool.pool_count.should == 1
+      Thread.list.length.should == old_thread_count
+    }
+  end
+
   context "release all" do
     it {
       pool = Roma::Client::ClientPool.instance(:release_all_1)
