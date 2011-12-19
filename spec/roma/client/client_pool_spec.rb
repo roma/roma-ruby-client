@@ -183,5 +183,60 @@ describe Roma::Client::ClientPool do
       client.default_hash_name.should == 'new_name'
     }
   end
+
+  context "release" do
+    subject {
+      pool = Roma::Client::ClientPool.instance(:release_test)
+      pool.servers = get_nodes
+      pool
+    }
+
+    it {
+      subject.pool_count.should == 0
+      subject.client do |client|
+      end
+
+      subject.pool_count.should == 1
+      subject.release.should be_true
+      subject.pool_count.should == 0
+    }
+  end
+
+  context "client block" do
+    before(:each) do
+      pool = Roma::Client::ClientPool.instance(:client_block)
+      pool.release
+    end
+
+    subject {
+      pool = Roma::Client::ClientPool.instance(:client_block)
+      pool.servers = get_nodes
+      pool
+    }
+
+    it "use block"do
+      subject.pool_count.should == 0
+      subject.client do |client|
+        client.set("test", "value").should == "STORED"
+      end
+      subject.pool_count.should == 1
+    end
+
+    it "raise exception in block, but pool certainly" do
+      subject.pool_count.should == 0
+      subject.client do |client|
+        client.set("test", "value").should == "STORED"
+      end
+      subject.pool_count.should == 1
+
+      lambda {
+        subject.client do |client|
+          raise "test error"
+        end
+      }.should raise_error RuntimeError, "test error"
+
+      subject.pool_count.should == 1
+    end
+  end
 end
 
