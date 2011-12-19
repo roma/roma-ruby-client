@@ -45,7 +45,7 @@ module Roma
           begin
             loop {
               sleep 10
-              update_rttable(@rttable.nodes)
+              update_rttable
             }
           rescue => e
             puts "#{e}\n#{$@}"
@@ -59,7 +59,7 @@ module Roma
       end
       private :init_sender
 
-      def update_rttable(nodes)
+      def update_rttable(nodes = self.rttable.nodes)
         raise RuntimeError.new("nodes must not be nil.") unless nodes
 
         nodes.each { |node|
