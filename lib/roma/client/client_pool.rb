@@ -35,7 +35,9 @@ module Roma
 
       # release all pool
       def self.release_all
-        @@client_pools = {}
+        @@client_pools.each do |k,v|
+          v.release
+        end
       end
 
       # get RomaClient instance
