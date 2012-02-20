@@ -6,19 +6,15 @@
 module Roma #:nodoc:
     module Client #:nodoc:
       # == What Is This Library?
-      # ROMA クライアントバージョン情報モジュール
+      # ROMA client version info.
       #
       module VERSION
-        # メジャーバージョン
         MAJOR = 0
 
-        # マイナバージョン
         MINOR = 4
 
-        # TINY version
-        TINY  = 0
+        TINY  = 1
 
-        # バージョン文字列
         STRING = [MAJOR, MINOR, TINY].join('.')
       end
     end

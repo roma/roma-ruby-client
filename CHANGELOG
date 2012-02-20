@@ -1,2 +1,7 @@
-= 0.4.0
-- support ClientPool
+* 0.4.1 (Feb 20 2012)
+
+* add client plugin files. [junji torii] caa2201
+
+* 0.4.0
+
+* support ClientPool
