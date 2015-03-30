@@ -2,6 +2,7 @@ pkg
 doc
 .bundle
 .rvmrc
+Gemfile.lock
 GPATH
 GRTAGS
 GSYMS
