@@ -282,6 +282,9 @@ describe Roma::Client::ClientPool do
       Roma::Client::ClientPool.release_all
       Roma::Client::ClientPool.instance(:release_all_1).pool_count.should == 0
       Roma::Client::ClientPool.instance(:release_all_2).pool_count.should == 0
+
+      Roma::Client::ClientPool.instance(:release_all_1).servers.should == get_nodes
+      Roma::Client::ClientPool.instance(:release_all_2).servers.should == get_nodes
     }
   end
 end
