@@ -1,3 +1,8 @@
+* 0.4.2 (Mar 31 2015)
+
+* Add gemspec and convert "should" to "expect" on rspec tests. [Hiroki Matsue] 4c7c465
+* modify to reproduce environment with Gemfile [tarr1124] 2205ed7
+
 * 0.4.1 (Feb 20 2012)
 
 * add client plugin files. [junji torii] caa2201
