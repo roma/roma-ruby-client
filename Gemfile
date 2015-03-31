@@ -1,8 +1,3 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem "rake"
-gem "rspec", "2.7.0"
-gem "rr", "1.0.4"
-
-# add rdoc for darkfish format
-gem "rdoc"
+gemspec

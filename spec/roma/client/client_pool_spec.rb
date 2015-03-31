@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require File.expand_path(File.join('..', '..', 'spec_helper'), File.dirname(__FILE__))
 
 describe Roma::Client::ClientPool do
@@ -9,15 +8,15 @@ describe Roma::Client::ClientPool do
   context "Singleton" do
     subject { Roma::Client::ClientPool.instance(:test) }
     it {
-      subject.class.should == Roma::Client::ClientPool
+      expect(subject.class).to eq(Roma::Client::ClientPool)
     }
 
     it {
-      subject.should be_equal Roma::Client::ClientPool.instance(:test)
+      expect(subject).to be_equal Roma::Client::ClientPool.instance(:test)
     }
 
     it {
-      subject.should_not be_equal Roma::Client::ClientPool.instance(:test2)
+      expect(subject).not_to be_equal Roma::Client::ClientPool.instance(:test2)
     }
 
     it {
@@ -30,37 +29,45 @@ describe Roma::Client::ClientPool do
 
   context "max pool size of default" do
     subject{ Roma::Client::ClientPool.instance(:test) }
-    its(:max_pool_size) {
-      should == 1
-    }
+
+    describe '#max_pool_size' do
+      subject { super().max_pool_size }
+      it {
+        is_expected.to eq(1)
+      }
+    end
   end
 
   context "set max pool size " do
     it do
       pool = Roma::Client::ClientPool.instance(:test)
-      pool.max_pool_size.should == 1
+      expect(pool.max_pool_size).to eq(1)
       pool.max_pool_size = 3
-      pool.max_pool_size.should == 3
+      expect(pool.max_pool_size).to eq(3)
 
       pool2 = Roma::Client::ClientPool.instance(:test2)
-      pool2.max_pool_size.should == 1
+      expect(pool2.max_pool_size).to eq(1)
     end
   end
 
   context "servers default" do
     subject { Roma::Client::ClientPool.instance(:test) }
-    its(:servers) { should be_nil }
+
+    describe '#servers' do
+      subject { super().servers }
+      it { is_expected.to be_nil }
+    end
   end
 
   context "servers set" do
     it {
       pool = Roma::Client::ClientPool.instance(:test_servers_set)
-      pool.servers.should be_nil
+      expect(pool.servers).to be_nil
       nodes = get_nodes
       pool.servers = nodes
-      pool.servers.should == nodes
+      expect(pool.servers).to eq(nodes)
 
-      Roma::Client::ClientPool.instance(:test_ini_nodes_set2).servers.should be_nil
+      expect(Roma::Client::ClientPool.instance(:test_ini_nodes_set2).servers).to be_nil
     }
   end
 
@@ -71,15 +78,15 @@ describe Roma::Client::ClientPool do
       pool
     end
 
-    it { pending 'TODO: startup or mock roma server'}
-    it { subject.pool_count.should == 0 }
+    it { skip 'TODO: startup or mock roma server'}
+    it { expect(subject.pool_count).to eq(0) }
     it {
       client = subject.client
-      client.class.should == Roma::Client::RomaClient
+      expect(client.class).to eq(Roma::Client::RomaClient)
       subject.push_client(client)
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
     }
-    it { pending "TODO: check nodes" }
+    it { skip "TODO: check nodes" }
   end
 
   context "client multi pool" do
@@ -90,21 +97,21 @@ describe Roma::Client::ClientPool do
     end
 
     it {
-      subject.pool_count.should == 0
+      expect(subject.pool_count).to eq(0)
       client  = subject.client
-      client.should_not be_nil
+      expect(client).not_to be_nil
 
       client2 = subject.client
-      client2.should_not be_nil
+      expect(client2).not_to be_nil
 
       subject.push_client(client)
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
 
       subject.push_client(client2)
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
 
-      client.should be_equal subject.client
-      subject.pool_count.should == 0
+      expect(client).to be_equal subject.client
+      expect(subject.pool_count).to eq(0)
     }
   end
 
@@ -115,7 +122,7 @@ describe Roma::Client::ClientPool do
       end
     end
 
-     module TestPlugin2
+    module TestPlugin2
       def test_plugin2
         "test_plugin2"
       end
@@ -123,20 +130,20 @@ describe Roma::Client::ClientPool do
 
     it {
       pool = Roma::Client::ClientPool.instance(:pm_test)
-      pool.plugin_modules.should be_nil
+      expect(pool.plugin_modules).to be_nil
 
       pool.add_plugin_module(TestPlugin)
-      pool.plugin_modules.should_not be_nil
-      pool.plugin_modules.size.should == 1
+      expect(pool.plugin_modules).not_to be_nil
+      expect(pool.plugin_modules.size).to eq(1)
       pool.plugin_modules[0] == TestPlugin
     }
 
     it {
       pool = Roma::Client::ClientPool.instance(:pms_test)
-      pool.plugin_modules.should be_nil
+      expect(pool.plugin_modules).to be_nil
 
       pool.plugin_modules = [TestPlugin, TestPlugin2]
-      pool.plugin_modules.size.should == 2
+      expect(pool.plugin_modules.size).to eq(2)
       pool.plugin_modules[0] == TestPlugin
       pool.plugin_modules[1] == TestPlugin2
     }
@@ -144,21 +151,21 @@ describe Roma::Client::ClientPool do
     it {
       pool = Roma::Client::ClientPool.instance(:pms_test2)
       pool.servers = get_nodes
-      pool.plugin_modules.should be_nil
+      expect(pool.plugin_modules).to be_nil
 
       pool.plugin_modules = [TestPlugin, TestPlugin2]
       client = pool.client
-      client.should_not be_nil
-      client.test_plugin.should == "test_plugin"
-      client.test_plugin2.should == "test_plugin2"
+      expect(client).not_to be_nil
+      expect(client.test_plugin).to eq("test_plugin")
+      expect(client.test_plugin2).to eq("test_plugin2")
     }
   end
 
   context "default type" do
     subject { Roma::Client::ClientPool.instance }
-    it { should_not be_nil }
-    it { subject.class.should == Roma::Client::ClientPool }
-    it { subject.should be_equal Roma::Client::ClientPool.instance(:default) }
+    it { is_expected.not_to be_nil }
+    it { expect(subject.class).to eq(Roma::Client::ClientPool) }
+    it { expect(subject).to be_equal Roma::Client::ClientPool.instance(:default) }
   end
 
   context "support hash name" do
@@ -172,15 +179,15 @@ describe Roma::Client::ClientPool do
       pool
     }
 
-    it { subject.default_hash_name.should == 'roma' }
+    it { expect(subject.default_hash_name).to eq('roma') }
     it {
       subject.default_hash_name = 'new_name'
-      subject.default_hash_name.should == 'new_name'
-      Roma::Client::ClientPool.instance.default_hash_name.should == 'new_name'
-      Roma::Client::ClientPool.instance(:other).default_hash_name.should == 'roma'
+      expect(subject.default_hash_name).to eq('new_name')
+      expect(Roma::Client::ClientPool.instance.default_hash_name).to eq('new_name')
+      expect(Roma::Client::ClientPool.instance(:other).default_hash_name).to eq('roma')
 
       client = subject.client
-      client.default_hash_name.should == 'new_name'
+      expect(client.default_hash_name).to eq('new_name')
     }
   end
 
@@ -192,13 +199,13 @@ describe Roma::Client::ClientPool do
     }
 
     it {
-      subject.pool_count.should == 0
+      expect(subject.pool_count).to eq(0)
       subject.client do |client|
       end
 
-      subject.pool_count.should == 1
-      subject.release.should be_true
-      subject.pool_count.should == 0
+      expect(subject.pool_count).to eq(1)
+      expect(subject.release).to be_truthy
+      expect(subject.pool_count).to eq(0)
     }
   end
 
@@ -215,27 +222,27 @@ describe Roma::Client::ClientPool do
     }
 
     it "use block"do
-      subject.pool_count.should == 0
+      expect(subject.pool_count).to eq(0)
       subject.client do |client|
-        client.set("test", "value").should == "STORED"
+        expect(client.set("test", "value")).to eq("STORED")
       end
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
     end
 
     it "raise exception in block, but pool certainly" do
-      subject.pool_count.should == 0
+      expect(subject.pool_count).to eq(0)
       subject.client do |client|
-        client.set("test", "value").should == "STORED"
+        expect(client.set("test", "value")).to eq("STORED")
       end
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
 
-      lambda {
+      expect {
         subject.client do |client|
           raise "test error"
         end
-      }.should raise_error RuntimeError, "test error"
+      }.to raise_error RuntimeError, "test error"
 
-      subject.pool_count.should == 1
+      expect(subject.pool_count).to eq(1)
     end
   end
 
@@ -247,8 +254,8 @@ describe Roma::Client::ClientPool do
       pool.client do |c|
       end
 
-      pool.pool_count.should == 1
-      Thread.list.length.should == old_thread_count + 1
+      expect(pool.pool_count).to eq(1)
+      expect(Thread.list.length).to eq(old_thread_count + 1)
     }
 
     it {
@@ -259,8 +266,8 @@ describe Roma::Client::ClientPool do
       pool.client do |c|
       end
 
-      pool.pool_count.should == 1
-      Thread.list.length.should == old_thread_count
+      expect(pool.pool_count).to eq(1)
+      expect(Thread.list.length).to eq(old_thread_count)
     }
   end
 
@@ -270,21 +277,21 @@ describe Roma::Client::ClientPool do
       pool.servers = get_nodes
       pool.client do |c|
       end
-      Roma::Client::ClientPool.instance(:release_all_1).pool_count.should == 1
+      expect(Roma::Client::ClientPool.instance(:release_all_1).pool_count).to eq(1)
 
       pool = Roma::Client::ClientPool.instance(:release_all_2)
       pool.servers = get_nodes
       pool.client do |c|
       end
-      pool.pool_count.should == 1
-      Roma::Client::ClientPool.instance(:release_all_2).pool_count.should == 1
+      expect(pool.pool_count).to eq(1)
+      expect(Roma::Client::ClientPool.instance(:release_all_2).pool_count).to eq(1)
 
       Roma::Client::ClientPool.release_all
-      Roma::Client::ClientPool.instance(:release_all_1).pool_count.should == 0
-      Roma::Client::ClientPool.instance(:release_all_2).pool_count.should == 0
+      expect(Roma::Client::ClientPool.instance(:release_all_1).pool_count).to eq(0)
+      expect(Roma::Client::ClientPool.instance(:release_all_2).pool_count).to eq(0)
 
-      Roma::Client::ClientPool.instance(:release_all_1).servers.should == get_nodes
-      Roma::Client::ClientPool.instance(:release_all_2).servers.should == get_nodes
+      expect(Roma::Client::ClientPool.instance(:release_all_1).servers).to eq(get_nodes)
+      expect(Roma::Client::ClientPool.instance(:release_all_2).servers).to eq(get_nodes)
     }
   end
 end
