@@ -2,51 +2,41 @@ require File.expand_path(File.join('..', '..', 'spec_helper'), File.dirname(__FI
 
 describe Roma::Client::ClientPool do
   before(:all) do
-    start_roma()
+    start_roma
   end
 
   after(:all) do
-    stop_roma()
+    stop_roma
   end
 
   def get_nodes
-    ['127.0.0.1:12001', '127.0.0.1:12002']
+    DEFAULT_PORTS.map { |port| "#{DEFAULT_HOST}:#{port}" }
   end
 
-  context "Singleton" do
+  context 'Singleton' do
     subject { Roma::Client::ClientPool.instance(:test) }
-    it {
-      expect(subject.class).to eq(Roma::Client::ClientPool)
-    }
+    it { expect(subject.class).to eq(Roma::Client::ClientPool) }
 
-    it {
-      expect(subject).to be_equal Roma::Client::ClientPool.instance(:test)
-    }
+    it { expect(subject).to be_equal Roma::Client::ClientPool.instance(:test) }
 
-    it {
-      expect(subject).not_to be_equal Roma::Client::ClientPool.instance(:test2)
-    }
+    it { expect(subject).not_to be_equal Roma::Client::ClientPool.instance(:test2) }
 
-    it {
-      expect {
-        Roma::Client::ClientPool.new
-      }.to raise_error(NoMethodError,
-                       "private method `new' called for Roma::Client::ClientPool:Class")
-    }
-  end
-
-  context "max pool size of default" do
-    subject{ Roma::Client::ClientPool.instance(:test) }
-
-    describe '#max_pool_size' do
-      subject { super().max_pool_size }
-      it {
-        is_expected.to eq(1)
-      }
+    it do
+      expect { Roma::Client::ClientPool.new }.to raise_error(NoMethodError,
+        "private method `new' called for Roma::Client::ClientPool:Class")
     end
   end
 
-  context "set max pool size " do
+  context 'max pool size of default' do
+    subject { Roma::Client::ClientPool.instance(:test) }
+
+    describe '#max_pool_size' do
+      subject { super().max_pool_size }
+      it { is_expected.to eq(1) }
+    end
+  end
+
+  context 'set max pool size ' do
     it do
       pool = Roma::Client::ClientPool.instance(:test)
       expect(pool.max_pool_size).to eq(1)
@@ -58,7 +48,7 @@ describe Roma::Client::ClientPool do
     end
   end
 
-  context "servers default" do
+  context 'servers default' do
     subject { Roma::Client::ClientPool.instance(:test) }
 
     describe '#servers' do
@@ -67,8 +57,8 @@ describe Roma::Client::ClientPool do
     end
   end
 
-  context "servers set" do
-    it {
+  context 'servers set' do
+    it do
       pool = Roma::Client::ClientPool.instance(:test_servers_set)
       expect(pool.servers).to be_nil
       nodes = get_nodes
@@ -76,35 +66,34 @@ describe Roma::Client::ClientPool do
       expect(pool.servers).to eq(nodes)
 
       expect(Roma::Client::ClientPool.instance(:test_ini_nodes_set2).servers).to be_nil
-    }
+    end
   end
 
-  context "client" do
+  context 'client' do
     subject do
       pool = Roma::Client::ClientPool.instance(:test_client)
       pool.servers = get_nodes
       pool
     end
 
-    it { skip 'TODO: startup or mock roma server'}
     it { expect(subject.pool_count).to eq(0) }
-    it {
+    it do
       client = subject.client
       expect(client.class).to eq(Roma::Client::RomaClient)
       subject.push_client(client)
       expect(subject.pool_count).to eq(1)
-    }
-    it { skip "TODO: check nodes" }
+    end
+    it { expect(subject.servers).to eq(get_nodes) }
   end
 
-  context "client multi pool" do
+  context 'client multi pool' do
     subject do
       pool = Roma::Client::ClientPool.instance(:test_client2)
       pool.servers = get_nodes
       pool
     end
 
-    it {
+    it do
       expect(subject.pool_count).to eq(0)
       client  = subject.client
       expect(client).not_to be_nil
@@ -120,23 +109,23 @@ describe Roma::Client::ClientPool do
 
       expect(client).to be_equal subject.client
       expect(subject.pool_count).to eq(0)
-    }
+    end
   end
 
-  context "plugin modules" do
+  context 'plugin modules' do
     module TestPlugin
       def test_plugin
-        "test_plugin"
+        'test_plugin'
       end
     end
 
     module TestPlugin2
       def test_plugin2
-        "test_plugin2"
+        'test_plugin2'
       end
     end
 
-    it {
+    it do
       pool = Roma::Client::ClientPool.instance(:pm_test)
       expect(pool.plugin_modules).to be_nil
 
@@ -144,9 +133,9 @@ describe Roma::Client::ClientPool do
       expect(pool.plugin_modules).not_to be_nil
       expect(pool.plugin_modules.size).to eq(1)
       pool.plugin_modules[0] == TestPlugin
-    }
+    end
 
-    it {
+    it do
       pool = Roma::Client::ClientPool.instance(:pms_test)
       expect(pool.plugin_modules).to be_nil
 
@@ -154,9 +143,9 @@ describe Roma::Client::ClientPool do
       expect(pool.plugin_modules.size).to eq(2)
       pool.plugin_modules[0] == TestPlugin
       pool.plugin_modules[1] == TestPlugin2
-    }
+    end
 
-    it {
+    it do
       pool = Roma::Client::ClientPool.instance(:pms_test2)
       pool.servers = get_nodes
       expect(pool.plugin_modules).to be_nil
@@ -164,31 +153,29 @@ describe Roma::Client::ClientPool do
       pool.plugin_modules = [TestPlugin, TestPlugin2]
       client = pool.client
       expect(client).not_to be_nil
-      expect(client.test_plugin).to eq("test_plugin")
-      expect(client.test_plugin2).to eq("test_plugin2")
-    }
+      expect(client.test_plugin).to eq('test_plugin')
+      expect(client.test_plugin2).to eq('test_plugin2')
+    end
   end
 
-  context "default type" do
+  context 'default type' do
     subject { Roma::Client::ClientPool.instance }
     it { is_expected.not_to be_nil }
     it { expect(subject.class).to eq(Roma::Client::ClientPool) }
     it { expect(subject).to be_equal Roma::Client::ClientPool.instance(:default) }
   end
 
-  context "support hash name" do
-    after(:all) {
-      Roma::Client::ClientPool.instance.default_hash_name = 'roma'
-    }
+  context 'support hash name' do
+    after(:all) { Roma::Client::ClientPool.instance.default_hash_name = 'roma' }
 
-    subject {
+    subject do
       pool = Roma::Client::ClientPool.instance
       pool.servers = get_nodes
       pool
-    }
+    end
 
     it { expect(subject.default_hash_name).to eq('roma') }
-    it {
+    it do
       subject.default_hash_name = 'new_name'
       expect(subject.default_hash_name).to eq('new_name')
       expect(Roma::Client::ClientPool.instance.default_hash_name).to eq('new_name')
@@ -196,17 +183,17 @@ describe Roma::Client::ClientPool do
 
       client = subject.client
       expect(client.default_hash_name).to eq('new_name')
-    }
+    end
   end
 
-  context "release" do
-    subject {
+  context 'release' do
+    subject do
       pool = Roma::Client::ClientPool.instance(:release_test)
       pool.servers = get_nodes
       pool
-    }
+    end
 
-    it {
+    it do
       expect(subject.pool_count).to eq(0)
       subject.client do |client|
       end
@@ -214,48 +201,48 @@ describe Roma::Client::ClientPool do
       expect(subject.pool_count).to eq(1)
       expect(subject.release).to be_truthy
       expect(subject.pool_count).to eq(0)
-    }
+    end
   end
 
-  context "client block" do
+  context 'client block' do
     before(:each) do
       pool = Roma::Client::ClientPool.instance(:client_block)
       pool.release
     end
 
-    subject {
+    subject do
       pool = Roma::Client::ClientPool.instance(:client_block)
       pool.servers = get_nodes
       pool
-    }
+    end
 
-    it "use block"do
+    it 'use block'do
       expect(subject.pool_count).to eq(0)
       subject.client do |client|
-        expect(client.set("test", "value")).to eq("STORED")
+        expect(client.set('test', 'value')).to eq('STORED')
       end
       expect(subject.pool_count).to eq(1)
     end
 
-    it "raise exception in block, but pool certainly" do
+    it 'raise exception in block, but pool certainly' do
       expect(subject.pool_count).to eq(0)
       subject.client do |client|
-        expect(client.set("test", "value")).to eq("STORED")
+        expect(client.set('test', 'value')).to eq('STORED')
       end
       expect(subject.pool_count).to eq(1)
 
-      expect {
+      expect do
         subject.client do |client|
-          raise "test error"
+          raise 'test error'
         end
-      }.to raise_error RuntimeError, "test error"
+      end.to raise_error RuntimeError, 'test error'
 
       expect(subject.pool_count).to eq(1)
     end
   end
 
-  context "start sync routing proc" do
-    it {
+  context 'start sync routing proc' do
+    it do
       pool = Roma::Client::ClientPool.instance(:sync_test)
       pool.servers = get_nodes
       old_thread_count = Thread.list.length
@@ -264,9 +251,9 @@ describe Roma::Client::ClientPool do
 
       expect(pool.pool_count).to eq(1)
       expect(Thread.list.length).to eq(old_thread_count + 1)
-    }
+    end
 
-    it {
+    it do
       pool = Roma::Client::ClientPool.instance(:no_sync_test)
       pool.servers = get_nodes
       pool.start_sync_routing_proc = false
@@ -276,11 +263,11 @@ describe Roma::Client::ClientPool do
 
       expect(pool.pool_count).to eq(1)
       expect(Thread.list.length).to eq(old_thread_count)
-    }
+    end
   end
 
-  context "release all" do
-    it {
+  context 'release all' do
+    it do
       pool = Roma::Client::ClientPool.instance(:release_all_1)
       pool.servers = get_nodes
       pool.client do |c|
@@ -300,7 +287,6 @@ describe Roma::Client::ClientPool do
 
       expect(Roma::Client::ClientPool.instance(:release_all_1).servers).to eq(get_nodes)
       expect(Roma::Client::ClientPool.instance(:release_all_2).servers).to eq(get_nodes)
-    }
+    end
   end
 end
-

@@ -1,14 +1,11 @@
 require 'rspec'
+require 'open3'
 require 'roma/romad'
 
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 Dir[File.dirname(__FILE__) + '/supports/**/*.rb'].each { |f| require f }
 
 require 'roma-client'
-
-RSpec.configure do |config|
-  config.mock_with :rr
-end
 
 DEFAULT_HOST = '127.0.0.1'
 DEFAULT_PORTS = %w(12001 12002)
@@ -20,10 +17,10 @@ def start_roma(host: DEFAULT_HOST, ports: DEFAULT_PORTS)
     FileUtils.rm(Dir.glob(["#{node}.log*", "#{node}.route*"]))
   end
 
-  system('mkroute', *nodes, '--replication_in_host')
+  Open3.capture3("mkroute #{nodes.join(' ')} --replication_in_host")
 
   ports.each do |port|
-    system('romad', host, '-p', port, '-d', '--replication_in_host', '--disabled_cmd_protect')
+    Open3.capture3("romad #{host} -p #{port} -d --replication_in_host --disabled_cmd_protect")
   end
 end
 
