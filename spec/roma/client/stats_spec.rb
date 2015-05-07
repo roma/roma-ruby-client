@@ -29,4 +29,37 @@ describe Roma::Client::Stats do
       expect(@stats['routing']['vnodes']['length']).to eq('512')
     end
   end
+
+  context 'filter argument' do
+    it 'responce only stat.run_recover' do
+      keyword = 'run_recover'
+      stat = @client.stats(filter: keyword)
+      expect(stat.keys.size).to eq(1)
+      expect(stat['stats'].keys.size).to eq(1)
+      expect(stat['stats'][keyword]).to eq('false')
+    end
+  end
+
+  context 'node argument' do
+    it 'responce from accessed port' do
+      DEFAULT_PORTS.each do |port|
+        stat = @client.stats(node: "#{DEFAULT_HOST}:#{port}")
+        expect(stat['stats']['address']).to eq(DEFAULT_HOST)
+        expect(stat['stats']['port']).to eq(port)
+      end
+    end
+  end
+
+  context 'filter and node arguments' do
+    it 'responce only stats.address and stats.port from accessed port' do
+      DEFAULT_PORTS.each do |port|
+        keywords = %w(address port)
+        stat = @client.stats(filter: keywords.join('|'), node: "#{DEFAULT_HOST}:#{port}")
+        expect(stat.keys.size).to eq(1)
+        expect(stat['stats'].keys.size).to eq(2)
+        expect(stat['stats']['address']).to eq(DEFAULT_HOST)
+        expect(stat['stats']['port']).to eq(port)
+      end
+    end
+  end
 end
