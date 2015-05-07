@@ -1,6 +1,14 @@
 require File.expand_path(File.join('..', '..', 'spec_helper'), File.dirname(__FILE__))
 
 describe Roma::Client::ClientPool do
+  before(:all) do
+    start_roma()
+  end
+
+  after(:all) do
+    stop_roma()
+  end
+
   def get_nodes
     ['127.0.0.1:12001', '127.0.0.1:12002']
   end
