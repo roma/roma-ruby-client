@@ -20,23 +20,22 @@ describe Roma::Client::Stats do
 
   context 'second level' do
     it 'accessible to routing.redundant' do
-      expect(@stats['routing']['redundant']).to eq('2')
+      expect(@stats['routing.redundant']).to eq('2')
     end
   end
 
   context 'third level' do
     it 'accessible to routing.nodes.length' do
-      expect(@stats['routing']['vnodes']['length']).to eq('512')
+      expect(@stats['routing.vnodes.length']).to eq('512')
     end
   end
 
   context 'filter argument' do
-    it 'responce only stat.run_recover' do
-      keyword = 'run_recover'
+    it 'responce only stats.run_recover' do
+      keyword = 'stats.run_recover'
       stat = @client.stats(filter: keyword)
       expect(stat.keys.size).to eq(1)
-      expect(stat['stats'].keys.size).to eq(1)
-      expect(stat['stats'][keyword]).to eq('false')
+      expect(stat[keyword]).to eq('false')
     end
   end
 
@@ -44,8 +43,8 @@ describe Roma::Client::Stats do
     it 'responce from accessed port' do
       DEFAULT_PORTS.each do |port|
         stat = @client.stats(node: "#{DEFAULT_HOST}:#{port}")
-        expect(stat['stats']['address']).to eq(DEFAULT_HOST)
-        expect(stat['stats']['port']).to eq(port)
+        expect(stat['stats.address']).to eq(DEFAULT_HOST)
+        expect(stat['stats.port']).to eq(port)
       end
     end
   end
@@ -55,10 +54,9 @@ describe Roma::Client::Stats do
       DEFAULT_PORTS.each do |port|
         keywords = %w(address port)
         stat = @client.stats(filter: keywords.join('|'), node: "#{DEFAULT_HOST}:#{port}")
-        expect(stat.keys.size).to eq(1)
-        expect(stat['stats'].keys.size).to eq(2)
-        expect(stat['stats']['address']).to eq(DEFAULT_HOST)
-        expect(stat['stats']['port']).to eq(port)
+        expect(stat.keys.size).to eq(2)
+        expect(stat['stats.address']).to eq(DEFAULT_HOST)
+        expect(stat['stats.port']).to eq(port)
       end
     end
   end
