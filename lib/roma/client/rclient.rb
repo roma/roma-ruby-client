@@ -7,10 +7,8 @@ require 'roma/client/sender'
 
 module Roma
   module Client
-
     # Class to access ROMA .
     class RomaClient
-
       # ROMA server connect timeout .
       @@timeout = 5
 
@@ -24,33 +22,33 @@ module Roma
       #
       # [ini_nodes] ROMA nodes array
       # [plugin_modules] set plugin modules if you use .
-      def initialize(ini_nodes,plugin_modules = nil, start_sync_routing_proc = true)
+      def initialize(ini_nodes, plugin_modules = nil, start_sync_routing_proc = true)
         @retry_count_write = 10
         @retry_count_read = 5
         @default_hash_name = 'roma'
 
         if plugin_modules
-          plugin_modules.each do|plugin|
+          plugin_modules.each do |plugin|
             self.extend plugin
           end
         end
 
         init_sender
-        update_rttable(ini_nodes.map{|n| n.sub(':','_')})
+        update_rttable(ini_nodes.map { |n| n.sub(':', '_') })
         init_sync_routing_proc if start_sync_routing_proc
       end
 
       def init_sync_routing_proc
-        Thread.new {
+        Thread.new do
           begin
-            loop {
+            loop do
               sleep 10
               update_rttable
-            }
+            end
           rescue => e
             puts "#{e}\n#{$@}"
           end
-        }
+        end
       end
       private :init_sync_routing_proc
 
@@ -377,9 +375,8 @@ module Roma
         ret.to_i
       end
 
-      def stats
-        raise RuntimeError.new("Unsupported yet") # TODO
-        @sender.send_stats_command
+      def stats(filter: "", node: @rttable.nodes.first)
+        @sender.send_stats_command(filter, node)
       end
 
       def version

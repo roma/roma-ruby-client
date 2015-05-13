@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'singleton'
 
 module Roma
@@ -117,6 +116,7 @@ module Roma
       end
 
       private
+
       def initialize
         @max_pool_size = 1
         @clients = []

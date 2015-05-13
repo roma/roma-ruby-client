@@ -1,12 +1,11 @@
 require 'timeout'
 require 'yaml'
 require 'roma/client/con_pool'
+require 'roma/client/stats'
 
 module Roma
   module Client
-
     class Sender
-
       def initialize
       end
 
@@ -24,7 +23,7 @@ module Roma
       end
 
       def send_routedump_command(node_id)
-        timeout(1){
+        timeout(1) do
           buf = RUBY_VERSION.split('.')
           if buf[0].to_i == 1 && buf[1].to_i == 8
             return send_routedump_yaml_command(node_id)
@@ -47,8 +46,8 @@ module Roma
           rd = Marshal.load(routes)
           ConPool.instance.return_connection(node_id, conn)
           return rd
-        }
-      rescue =>e
+        end
+      rescue => e
         STDERR.puts "#{node_id} #{e.inspect}"
         nil
       end
@@ -67,8 +66,20 @@ module Roma
         return rd
       end
 
-      def send_stats_command
-        # TODO
+      def send_stats_command(filter, node_id)
+        conn = ConPool.instance.get_connection(node_id)
+        cmd = "stats"
+        cmd += " #{filter}" if filter
+        conn.write "#{cmd}\r\n"
+
+        stats_str = ''
+        while ((line = conn.gets) != "END\r\n")
+          stats_str << line
+        end
+
+        stats = Roma::Client::Stats.new(stats_str)
+        ConPool.instance.return_connection(node_id, conn)
+        return stats
       end
 
       def send_version_command(ap)
@@ -160,7 +171,6 @@ module Roma
         end
         ret
       end
-
     end
   end
 end
