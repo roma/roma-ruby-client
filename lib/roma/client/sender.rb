@@ -10,14 +10,14 @@ module Roma
       end
 
       def send_route_mklhash_command(node_id)
-        timeout(1){
+        timeout(1) do
           conn = ConPool.instance.get_connection(node_id)
           conn.write "mklhash 0\r\n"
           ret = conn.gets
           ConPool.instance.return_connection(node_id, conn)
           return ret.chomp if ret
-        }
-      rescue =>e
+        end
+      rescue => e
         STDERR.puts "#{node_id} #{e.inspect}"
         return nil
       end
@@ -57,18 +57,18 @@ module Roma
         conn.write "routingdump yaml\r\n"
 
         yaml = ''
-        while( (line = conn.gets) != "END\r\n" )
+        while ((line = conn.gets) != "END\r\n")
           yaml << line
         end
 
         rd = YAML.load(yaml)
         ConPool.instance.return_connection(node_id, conn)
-        return rd
+        rd
       end
 
       def send_stats_command(filter, node_id)
         conn = ConPool.instance.get_connection(node_id)
-        cmd = "stats"
+        cmd = 'stats'
         cmd += " #{filter}" if filter
         conn.write "#{cmd}\r\n"
 
@@ -79,7 +79,7 @@ module Roma
 
         stats = Roma::Client::Stats.new(stats_str)
         ConPool.instance.return_connection(node_id, conn)
-        return stats
+        stats
       end
 
       def send_version_command(ap)
@@ -87,8 +87,8 @@ module Roma
         conn.write("version\r\n")
         res = conn.gets.chomp
         ConPool.instance.return_connection(ap, conn)
-        raise unless res
-        return res
+        fail unless res
+        res
       end
 
       def send_verbosity_command(ap)
@@ -99,7 +99,7 @@ module Roma
 
       def send_command(nid, cmd, value = nil, receiver = :oneline_receiver)
         con = ConPool.instance.get_connection(nid)
-        raise unless con
+        fail unless con
         if value
           con.write "#{cmd}\r\n#{value}\r\n"
         else
@@ -108,8 +108,8 @@ module Roma
         ret = send(receiver, con)
         ConPool.instance.return_connection(nid, con)
         if ret && ret.instance_of?(String) &&
-            (ret =~ /^SERVER_ERROR/ || ret =~ /^CLIENT_ERROR/)
-          raise ret
+           (ret =~ /^SERVER_ERROR/ || ret =~ /^CLIENT_ERROR/)
+          fail ret
         end
         ret
       end
@@ -118,7 +118,7 @@ module Roma
 
       def oneline_receiver(con)
         ret = con.gets
-        raise "connection closed" if ret.nil?
+        fail 'connection closed' if ret.nil?
         ret.chomp
       end
 
