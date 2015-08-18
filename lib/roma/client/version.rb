@@ -12,7 +12,7 @@ module Roma #:nodoc:
 
       MINOR = 4
 
-      TINY  = 2
+      TINY  = 3
 
       STRING = [MAJOR, MINOR, TINY].join('.')
     end
