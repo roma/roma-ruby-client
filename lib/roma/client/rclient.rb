@@ -1,6 +1,7 @@
 require 'digest/sha1'
 require 'socket'
 require 'singleton'
+require 'timeout'
 require 'roma/client/con_pool'
 require 'roma/client/client_rttable'
 require 'roma/client/sender'
@@ -402,7 +403,7 @@ module Roma
         nid, d = @rttable.search_node(key)
         cmd2 = sprintf(cmd, "#{key}\e#{@default_hash_name}", *params)
 
-        timeout(@@timeout){
+        Timeout.timeout(@@timeout){
           return @sender.send_command(nid, cmd2, value, receiver)
         }
       rescue => e
