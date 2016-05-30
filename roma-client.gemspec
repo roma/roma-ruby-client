@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
     '--main', 'README',
     '-c UTF-8',
   ]
-  s.extra_rdoc_files = ['README', 'CHANGELOG']
+  s.extra_rdoc_files = ['README', 'CHANGELOG.md']
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
