@@ -1,7 +1,6 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'rake'
 require 'roma/client/version'
 
 Gem::Specification.new do |s|
@@ -12,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = 'ROMA client library'
   s.homepage = 'http://roma-kvs.org/'
   s.license = 'GPL-3.0'
-  s.files = FileList[
+  s.files = Dir[
     '[A-Z]*',
     'bin/**/*',
     'lib/**/*',
