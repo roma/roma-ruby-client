@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.description = 'ROMA client library'
   s.homepage = 'http://roma-kvs.org/'
   s.license = 'GPL-3.0'
+  s.required_ruby_version = '> 2.1.0'
   s.files = Dir[
     '[A-Z]*',
     'bin/**/*',
