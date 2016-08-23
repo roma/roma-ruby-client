@@ -1,3 +1,8 @@
+# 0.4.4 (Aug 23 2016)
+
+* Started use Travis CI [#8](https://github.com/roma/roma-ruby-client/pull/8)
+* Replace the deprecated method `Object.timeout` with `Timeout.timeout` [#9](https://github.com/roma/roma-ruby-client/pull/9)
+
 # 0.4.3 (Aug 19 2015)
 
 * Change interface of Stat object and refactoring [Hiroki Matsue] 7438faf

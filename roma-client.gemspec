@@ -29,10 +29,10 @@ Gem::Specification.new do |s|
   s.rdoc_options = [
     '--line-numbers',
     '--inline-source',
-    '--main', 'README',
+    '--main', 'README.md',
     '-c UTF-8',
   ]
-  s.extra_rdoc_files = ['README', 'CHANGELOG.md']
+  s.extra_rdoc_files = ['README.md', 'CHANGELOG.md']
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
