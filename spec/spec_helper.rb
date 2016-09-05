@@ -1,3 +1,12 @@
+if ENV['CI']
+  require 'coveralls'
+
+  Coveralls.wear!
+  SimpleCov.start do
+    add_filter '/spec/'
+  end
+end
+
 require 'rspec'
 require 'roma/romad'
 

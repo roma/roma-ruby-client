@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/roma/roma-ruby-client.svg?branch=master)](https://travis-ci.org/roma/roma-ruby-client)
 [![Gem Version](https://badge.fury.io/rb/roma-client.svg)](https://badge.fury.io/rb/roma-client)
+[![Coverage Status](https://coveralls.io/repos/github/roma/roma-ruby-client/badge.svg?branch=master)](https://coveralls.io/github/roma/roma-ruby-client?branch=master)
 
 ROMA is one of the data storing systems for distributed key-value stores in Ruby.
 The gem `roma-client` is Ruby client to talk with ROMA severs.
