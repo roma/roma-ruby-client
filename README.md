@@ -1,5 +1,7 @@
 # ROMA Client for Ruby
 
+[![Build Status](https://travis-ci.org/roma/roma-ruby-client.svg?branch=master)](https://travis-ci.org/roma/roma-ruby-client)
+
 ROMA is one of the data storing systems for distributed key-value stores in Ruby.
 The gem `roma-client` is Ruby client to talk with ROMA severs.
 
