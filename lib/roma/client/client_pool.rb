@@ -19,23 +19,21 @@ module Roma
       attr_accessor :start_sync_routing_proc
       attr_accessor :max_pool_size
 
-      @@client_pools = {}
-
       # get ClientPool instance
       # type:: identifier for client groups.
       def self.instance(type = :default)
-        @@client_pools[type] ||= new
-        @@client_pools[type]
+        client_pools[type] ||= new
+        client_pools[type]
       end
 
       # get all pool
       def self.client_pools
-        @@client_pools
+        @@client_pools ||= {}
       end
 
       # release all pool
       def self.release_all
-        @@client_pools.each do |k,v|
+        client_pools.each do |k,v|
           v.release
         end
       end
