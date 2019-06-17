@@ -1,6 +1,5 @@
 require 'yaml'
 require 'digest/sha1'
-require 'roma/client/routing/routing_data'
 
 module Roma
   module Client
@@ -38,7 +37,7 @@ module Roma
         d & @search_mask
       end
 
-      # Returns a node-is list at the vnode. 
+      # Returns a node-is list at the vnode.
       # +vn+: vnode-id
       def search_nodes(vn)
         @rd.v_idx[vn].clone

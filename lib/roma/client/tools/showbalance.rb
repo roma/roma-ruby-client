@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'roma/client/sender'
-require 'roma/client/routing/routing_data'
 
 if ARGV.length < 1
   STDERR.puts "usage:#{$0} node-id"
