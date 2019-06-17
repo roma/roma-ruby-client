@@ -17,24 +17,23 @@ module Roma
       attr_accessor :servers
       attr_accessor :default_hash_name
       attr_accessor :start_sync_routing_proc
-
-      @@client_pools = {}
+      attr_accessor :max_pool_size
 
       # get ClientPool instance
       # type:: identifier for client groups.
       def self.instance(type = :default)
-        @@client_pools[type] ||= new
-        @@client_pools[type]
+        client_pools[type] ||= new
+        client_pools[type]
       end
 
       # get all pool
       def self.client_pools
-        @@client_pools
+        @@client_pools ||= {}
       end
 
       # release all pool
       def self.release_all
-        @@client_pools.each do |k,v|
+        client_pools.each do |k,v|
           v.release
         end
       end
@@ -46,21 +45,22 @@ module Roma
       def client
         c = nil
         if @clients.empty?
-          client = Roma::Client::RomaClient.new(servers,
+          c = Roma::Client::RomaClient.new(servers,
                                                 plugin_modules,
                                                 start_sync_routing_proc)
-          client.default_hash_name = default_hash_name
-          c = client
+          c.default_hash_name = default_hash_name
         else
           c = @clients.pop
         end
 
-        return c unless block_given?
-
-        begin
-          yield c
-        ensure
-          push_client(c)
+        if block_given?
+          begin
+            yield c
+          ensure
+            push_client(c)
+          end
+        else
+          return c
         end
       end
 
@@ -80,16 +80,6 @@ module Roma
         if @clients.size < max_pool_size
           @clients.push(client)
         end
-      end
-
-      # get max pool size
-      def max_pool_size
-        @max_pool_size
-      end
-
-      # set max_pool_size
-      def max_pool_size=(count)
-        @max_pool_size = count
       end
 
       # get all clients
